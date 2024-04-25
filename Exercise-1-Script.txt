@@ -1,0 +1,14 @@
+#!usr/bin/env bash
+
+file="C://file_diff.txt"
+
+while read -r line; do
+    echo -e "$line\n"
+    
+	if echo "$line" | grep 'M\|A'; then
+  		mkdir -p deployPackage/added/added.txt
+	elif echo "$line" | grep 'R\|D'; then
+		mkdir -p deployPackage/removed/removed.txt
+   	fi
+
+done <$file 

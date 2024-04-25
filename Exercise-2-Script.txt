@@ -1,0 +1,55 @@
+import json
+import sys
+import random
+
+def perform_subtraction(numbers):
+    result = [str(numbers[i] - numbers[i+1]) for i in range(len(numbers)-1)]
+    print("Subtraction:", ", ".join(result))
+
+def perform_multiplication(numbers):
+    result = {"InputNumber{}".format(i+1): numbers[i] for i in range(len(numbers))}
+    result["Multiplication"] = 1
+    for num in numbers:
+        result["Multiplication"] *= num
+    with open("multiplication_result.json", "w") as f:
+        json.dump(result, f)
+    print("Multiplication result stored in 'multiplication_result.json'")
+
+def pick_random_number(numbers):
+    rand_num = random.choice(numbers)
+    print("Randomly picked number:", rand_num)
+
+def print_sorted(numbers, reverse=False):
+    sorted_numbers = sorted(numbers, reverse=reverse)
+    print("Sorted numbers ({}):".format("highest to lowest" if reverse else "lowest to highest"), sorted_numbers)
+
+def main():
+    if len(sys.argv) != 7:
+        print("Usage: python script.py num1 num2 num3 num4 num5 num6")
+        sys.exit(1)
+
+    numbers = [int(arg) for arg in sys.argv[1:]]
+
+    print("1. Perform subtraction and show output on screen")
+    print("2. Perform multiplication and store result in a JSON file")
+    print("3. Pick randomly a number and show it on screen")
+    print("4. Print sorted (highest to lowest) array/list numbers")
+    print("5. Print sorted (lowest to highest) array/list numbers")
+
+    choice = input("Enter your choice: ")
+
+    if choice == '1':
+        perform_subtraction(numbers)
+    elif choice == '2':
+        perform_multiplication(numbers)
+    elif choice == '3':
+        pick_random_number(numbers)
+    elif choice == '4':
+        print_sorted(numbers, reverse=True)
+    elif choice == '5':
+        print_sorted(numbers)
+    else:
+        print("Invalid choice")
+
+if __name__ == "__main__":
+    main()
