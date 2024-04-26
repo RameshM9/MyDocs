@@ -1,14 +1,46 @@
-#!usr/bin/env bash
+#!/bin/bash
 
-file="C://file_diff.txt"
+# Define paths
+deploy_package_directory="./deployPackage"
+added_directory="${deploy_package_directory}/added"
+removed_directory="${deploy_package_directory}/removed"
 
-while read -r line; do
-    echo -e "$line\n"
+# Create directories if they don't exist.
+mkdir -p "${added_directory}" "${removed_directory}"
+
+# Read file_diff.txt line by line.
+while IFS= read -r line; do
+    # Extract status and file name
+    status=$(echo "${line}" | awk '{print $1}')
+    file_name=$(echo "${line}" | awk '{print $2}')
     
-	if echo "$line" | grep 'M\|A'; then
-  		mkdir -p deployPackage/added/added.txt
-	elif echo "$line" | grep 'R\|D'; then
-		mkdir -p deployPackage/removed/removed.txt
-   	fi
+    # Extract just the file name without the path
+    file_name=$(basename "${file_name}")
+    
+    # Determine the destination directory based on status
+    if [ "${status}" = "M" ] || [ "${status}" = "A" ]; then
+        destination_directory="${added_directory}"
+    elif [ "${status}" = "R" ] || [ "${status}" = "D" ]; then
+        destination_directory="${removed_directory}"
+    else
+        # Skip if status is neither M, A, R, nor D
+        continue
+    fi
+    
+    # Copy/move the file to the destination directory
+    source_path="${file_name}"
+    destination_path="${destination_directory}/${file_name}"
+    
+    # Copy or move based on the status
+    if [ -e "${source_path}" ]; then
+        if [ "${status}" = "R" ] || [ "${status}" = "D" ]; then
+            mv "${source_path}" "${destination_path}"
+        else
+            cp "${source_path}" "${destination_path}"
+        fi
+    else
+        echo "Warning: File '${file_name}' does not exist."
+    fi
+done < "file_diff.txt"
 
-done <$file 
+echo "Files processed successfully."
