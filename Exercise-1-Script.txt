@@ -19,9 +19,11 @@ while IFS= read -r line; do
     
     # Determine the destination directory based on status
     if [ "${status}" = "M" ] || [ "${status}" = "A" ]; then
-        destination_directory="${added_directory}"
+       # echo "$filename" >> added.txt
+        destination_directory="${added_directory}"  #  /${filename}
     elif [ "${status}" = "R" ] || [ "${status}" = "D" ]; then
-        destination_directory="${removed_directory}"
+       # echo "$filename" >> removed.txt
+        destination_directory="${removed_directory}" # /${filename}
     else
         # Skip if status is neither M, A, R, nor D
         continue
